@@ -55,17 +55,29 @@ public class EquipamentoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/equipamentos/{id}")
-    public ResponseEntity<Void> excluir(
+    @PatchMapping("/equipamentos/{id}/ativar")
+    public ResponseEntity<EquipamentoResponseDTO> ativar(
             @PathVariable Long id) {
 
-        if (equipamentoService.buscarPorId(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(
+                equipamentoService.ativar(id)
+        );
+    }
 
-        equipamentoService.excluir(id);
+    @PatchMapping("/equipamentos/{id}/inativar")
+    public ResponseEntity<EquipamentoResponseDTO> inativar(
+            @PathVariable Long id) {
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(
+                equipamentoService.inativar(id)
+        );
+    }
+
+    @GetMapping("/clientes/{clienteId}/equipamentos/ativos")
+    public List<EquipamentoResponseDTO> listarAtivosPorCliente(
+            @PathVariable Long clienteId) {
+
+        return equipamentoService.listarAtivosPorCliente(clienteId);
     }
 
     @GetMapping("/clientes/{clienteId}/equipamentos")

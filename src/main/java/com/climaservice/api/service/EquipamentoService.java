@@ -4,6 +4,7 @@ import com.climaservice.api.dto.EquipamentoRequestDTO;
 import com.climaservice.api.dto.EquipamentoResponseDTO;
 import com.climaservice.api.entity.Cliente;
 import com.climaservice.api.entity.Equipamento;
+import com.climaservice.api.entity.StatusEquipamento;
 import com.climaservice.api.exception.ResourceNotFoundException;
 import com.climaservice.api.repository.ClienteRepository;
 import com.climaservice.api.repository.EquipamentoRepository;
@@ -90,8 +91,49 @@ public class EquipamentoService {
                 });
     }
 
-    public void excluir(Long id) {
-        equipamentoRepository.deleteById(id);
+    public List<EquipamentoResponseDTO> listarAtivosPorCliente(
+            Long clienteId) {
+
+        return equipamentoRepository
+                .findByClienteIdAndStatus(
+                        clienteId,
+                        StatusEquipamento.ATIVO
+                )
+                .stream()
+                .map(this::converterParaResponse)
+                .toList();
+    }
+
+    public EquipamentoResponseDTO ativar(Long id) {
+
+        Equipamento equipamento = equipamentoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Equipamento com ID " + id + " não encontrado"
+                        ));
+
+        equipamento.setStatus(StatusEquipamento.ATIVO);
+
+        Equipamento equipamentoAtualizado =
+                equipamentoRepository.save(equipamento);
+
+        return converterParaResponse(equipamentoAtualizado);
+    }
+
+    public EquipamentoResponseDTO inativar(Long id) {
+
+        Equipamento equipamento = equipamentoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Equipamento com ID " + id + " não encontrado"
+                        ));
+
+        equipamento.setStatus(StatusEquipamento.INATIVO);
+
+        Equipamento equipamentoAtualizado =
+                equipamentoRepository.save(equipamento);
+
+        return converterParaResponse(equipamentoAtualizado);
     }
 
     private EquipamentoResponseDTO converterParaResponse(
@@ -104,6 +146,7 @@ public class EquipamentoService {
                 equipamento.getCapacidadeBtu(),
                 equipamento.getNumeroSerie(),
                 equipamento.getLocalInstalacao(),
+                equipamento.getStatus(),
                 equipamento.getCliente().getId(),
                 equipamento.getCliente().getNome()
         );

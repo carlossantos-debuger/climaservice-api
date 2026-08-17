@@ -46,6 +46,7 @@ public class Equipamento {
         this.numeroSerie = numeroSerie;
         this.localInstalacao = localInstalacao;
         this.cliente = cliente;
+        this.status = StatusEquipamento.ATIVO;
     }
 
     public Long getId() {
@@ -99,4 +100,18 @@ public class Equipamento {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
+
+    public StatusEquipamento getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEquipamento status) {
+        this.status = status;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private StatusEquipamento status;
+
+
 }
