@@ -4,6 +4,7 @@ import com.climaservice.api.dto.EquipamentoRequestDTO;
 import com.climaservice.api.dto.EquipamentoResponseDTO;
 import com.climaservice.api.entity.Cliente;
 import com.climaservice.api.entity.Equipamento;
+import com.climaservice.api.exception.ResourceNotFoundException;
 import com.climaservice.api.repository.ClienteRepository;
 import com.climaservice.api.repository.EquipamentoRepository;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class EquipamentoService {
 
         Cliente cliente = clienteRepository.findById(dto.clienteId())
                 .orElseThrow(() ->
-                        new IllegalArgumentException("Cliente não encontrado"));
+                        new ResourceNotFoundException("Cliente não encontrado"));
         Equipamento equipamento = new Equipamento(
                 dto.marca(),
                 dto.modelo(),
@@ -72,7 +73,7 @@ public class EquipamentoService {
                     Cliente cliente = clienteRepository
                             .findById(dto.clienteId())
                             .orElseThrow(() ->
-                                    new IllegalArgumentException(
+                                    new ResourceNotFoundException(
                                             "Cliente não encontrado"));
 
                     equipamento.setMarca(dto.marca());
